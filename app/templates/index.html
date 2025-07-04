@@ -4,7 +4,7 @@
 <h2>Welcome to ClimaS - Climate Smart Platform</h2>
 <p>Visualize climate trends, predict future conditions, and get crop recommendations for your region.</p>
 
-<form method="POST" action="{{ url_for('predict') }}" class="form-section">
+<form method="POST" action="{{ url_for('main.predict') }}" class="form-section">
     <label for="years_ahead">Predict Climate for:</label>
     <select name="years_ahead" id="years_ahead">
         <option value="5">5 Years</option>
@@ -17,7 +17,7 @@
 
 <div id="loader" class="hidden">Loading...</div>
 
-<form method="POST" action="{{ url_for('simulate') }}" class="form-section">
+<form method="POST" action="{{ url_for('main.simulate') }}" class="form-section">
     <label for="deforestation_factor">Simulate Deforestation Impact:</label>
     <input type="range" min="0" max="1" step="0.1" name="deforestation_factor" id="deforestation_factor" value="0">
     <span id="deforestation_value">0%</span>

@@ -4,9 +4,9 @@
 <h2>Climate Prediction for Next {{ years_ahead }} Years</h2>
 
 <div class="graphs">
-    {{ graphs.temp_graph | safe }}
-    {{ graphs.rain_graph | safe }}
-    {{ graphs.hum_graph | safe }}
+    <div id="tempGraph">{{ graphs.temp_graph | safe }}</div>
+    <div id="rainGraph">{{ graphs.rain_graph | safe }}</div>
+    <div id="humGraph">{{ graphs.hum_graph | safe }}</div>
 </div>
 
 <h3>Recommended Crops Based on Predictions:</h3>
@@ -16,5 +16,5 @@
     {% endfor %}
 </ul>
 
-<a href="{{ url_for('index') }}" class="back-link">Back to Home</a>
+<a href="{{ url_for('main.index') }}" class="back-link">Back to Home</a>
 {% endblock %}

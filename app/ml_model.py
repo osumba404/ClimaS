@@ -13,26 +13,42 @@
 
 
 # app/ml_model.py
-
-import numpy as np
 import pandas as pd
+import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 
-# ===============================
-# Train Random Forest models
-# ===============================
+# ------------------------------------------
+# Load Sample Climate Data
+# In production, replace with real datasets or APIs
+# ------------------------------------------
+def load_sample_data():
+    """
+    Simulates historical climate data.
+    Returns:
+        pd.DataFrame: Climate dataset with Year, Temperature, Rainfall, Humidity
+    """
+    data = {
+        'Year': range(2000, 2025),
+        'Temperature': [25.0 + i * 0.1 + np.random.normal(0, 0.5) for i in range(25)],
+        'Rainfall': [800 + i * 2 + np.random.normal(0, 50) for i in range(25)],
+        'Humidity': [60 + i * 0.5 + np.random.normal(0, 5) for i in range(25)]
+    }
+    return pd.DataFrame(data)
+
+
+# ------------------------------------------
+# Train ML Model
+# ------------------------------------------
 def train_model(df):
     """
-    Trains separate Random Forest models for Temperature, Rainfall, and Humidity.
-    
+    Trains a Random Forest model for each climate target.
     Args:
-        df (DataFrame): Historical climate data with 'Year', 'Temperature', 'Rainfall', 'Humidity' columns.
-    
+        df (pd.DataFrame): Historical climate dataset
     Returns:
-        dict: Dictionary of trained models {'Temperature': model, 'Rainfall': model, 'Humidity': model}
+        dict: Trained models for Temperature, Rainfall, Humidity
     """
-    X = df[['Year']]
     models = {}
+    X = df[['Year']]
 
     for target in ['Temperature', 'Rainfall', 'Humidity']:
         y = df[target]
@@ -43,53 +59,50 @@ def train_model(df):
     return models
 
 
-# ===============================
-# Predict Future Climate
-# ===============================
-def predict_climate(models, years_ahead, start_year=2025):
+# ------------------------------------------
+# Predict Future Climate Conditions
+# ------------------------------------------
+def predict_climate(models, years_ahead):
     """
-    Predicts future climate trends using trained models.
-
+    Predicts future climate metrics based on trained models.
     Args:
-        models (dict): Trained models for each target variable.
-        years_ahead (int): Number of years to predict.
-        start_year (int): Year to start predictions from.
-
+        models (dict): Trained models
+        years_ahead (int): Number of years to forecast
     Returns:
-        DataFrame: Predicted 'Year', 'Temperature', 'Rainfall', 'Humidity' values.
+        pd.DataFrame: Predicted climate for future years
     """
-    future_years = np.arange(start_year, start_year + years_ahead).reshape(-1, 1)
+    future_years = np.array(range(2025, 2025 + years_ahead)).reshape(-1, 1)
     predictions = {}
 
     for target, model in models.items():
         predictions[target] = model.predict(future_years)
 
-    predicted_df = pd.DataFrame({
-        'Year': future_years.flatten(),
+    return pd.DataFrame({
+        'Year': range(2025, 2025 + years_ahead),
         'Temperature': predictions['Temperature'],
         'Rainfall': predictions['Rainfall'],
         'Humidity': predictions['Humidity']
     })
 
-    return predicted_df
 
-
-# ===============================
-# Simulate Scenario (e.g., deforestation impact)
-# ===============================
+# ------------------------------------------
+# Simulate Scenario: Deforestation Impact
+# ------------------------------------------
 def simulate_scenario(df, deforestation_factor):
     """
-    Simulates climate impact of deforestation by adjusting temperature and rainfall.
-
+    Applies deforestation effects to predicted climate.
     Args:
-        df (DataFrame): Predicted climate DataFrame.
-        deforestation_factor (float): Percentage increase in deforestation (0.0 - 1.0 scale).
-
+        df (pd.DataFrame): Baseline predicted climate
+        deforestation_factor (float): 0.0 to 1.0 scale representing % deforestation
     Returns:
-        DataFrame: Adjusted climate DataFrame after simulation.
+        pd.DataFrame: Adjusted climate data reflecting deforestation impact
     """
     df_simulated = df.copy()
-    df_simulated['Temperature'] += deforestation_factor * 0.5  # +0.5°C per 10% deforestation
-    df_simulated['Rainfall'] *= (1 - deforestation_factor * 0.2)  # -20% rainfall per 10% deforestation
+
+    # +0.5°C per 10% deforestation
+    df_simulated['Temperature'] += deforestation_factor * 0.5  
+
+    # -20% rainfall per 10% deforestation
+    df_simulated['Rainfall'] *= (1 - deforestation_factor * 0.2)  
 
     return df_simulated
