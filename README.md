@@ -15,6 +15,46 @@
 
 ---
 
+##📊 Typical Workflow
+1. User selects a region
+2. System retrieves and processes historical climate data
+3. Trends in temperature, rainfall, and humidity are displayed interactively
+4. AI model predicts future climate conditions
+5. Users simulate land-use changes like deforestation/afforestation
+6. Updated projections shown based on simulations
+7. System suggests crops best suited to the predicted climate
+
+---
+
+##🔧 Technologies Used
+Flask — Python web framework
+Pandas & Scikit-learn — Data preprocessing and machine learning
+Matplotlib & Plotly — Visualizations and interactive graphs
+OpenWeatherMap API — Real-time weather data integration
+Jupyter Notebooks — Prototyping and data exploration
+
+---
+
+##💡 Potential Future Enhancements
+Satellite imagery analysis for land cover detection (Sentinel-2, Landsat)
+Integration with advanced forecasting APIs (e.g., Mistral AI)
+Expanded simulation options: urban expansion, conservation zones
+User accounts and scenario-saving capability
+Mobile-friendly interface
+
+---
+
+##🤝 Contributing
+Contributions are welcome! To contribute:
+
+Fork the repository
+Create a new feature branch
+Commit your changes
+Submit a pull request for review
+Bug reports, feature suggestions, and code improvements are encouraged.
+
+---
+
 ## ⚙️ Setup & Installation
 
 ### 1️⃣ Clone the Repository
@@ -41,37 +81,3 @@ OPENWEATHER_API_KEY=your_openweather_api_key_here
 ```bash
 python app.py
 ```
-
-##📊 Typical Workflow
-1. User selects a region
-2. System retrieves and processes historical climate data
-3. Trends in temperature, rainfall, and humidity are displayed interactively
-4. AI model predicts future climate conditions
-5. Users simulate land-use changes like deforestation/afforestation
-6. Updated projections shown based on simulations
-7. System suggests crops best suited to the predicted climate
-
-##🔧 Technologies Used
-Flask — Python web framework
-Pandas & Scikit-learn — Data preprocessing and machine learning
-Matplotlib & Plotly — Visualizations and interactive graphs
-OpenWeatherMap API — Real-time weather data integration
-Jupyter Notebooks — Prototyping and data exploration
-
-
-##💡 Potential Future Enhancements
-Satellite imagery analysis for land cover detection (Sentinel-2, Landsat)
-Integration with advanced forecasting APIs (e.g., Mistral AI)
-Expanded simulation options: urban expansion, conservation zones
-User accounts and scenario-saving capability
-Mobile-friendly interface
-
-
-##🤝 Contributing
-Contributions are welcome! To contribute:
-
-Fork the repository
-Create a new feature branch
-Commit your changes
-Submit a pull request for review
-Bug reports, feature suggestions, and code improvements are encouraged.
