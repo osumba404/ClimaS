@@ -15,7 +15,8 @@
 
 ---
 
-##📊 Typical Workflow
+## 📊 Typical Workflow
+
 1. User selects a region
 2. System retrieves and processes historical climate data
 3. Trends in temperature, rainfall, and humidity are displayed interactively
@@ -26,7 +27,7 @@
 
 ---
 
-##🔧 Technologies Used
+## 🔧 Technologies Used
 Flask — Python web framework
 Pandas & Scikit-learn — Data preprocessing and machine learning
 Matplotlib & Plotly — Visualizations and interactive graphs
@@ -35,7 +36,7 @@ Jupyter Notebooks — Prototyping and data exploration
 
 ---
 
-##💡 Potential Future Enhancements
+## 💡 Potential Future Enhancements
 Satellite imagery analysis for land cover detection (Sentinel-2, Landsat)
 Integration with advanced forecasting APIs (e.g., Mistral AI)
 Expanded simulation options: urban expansion, conservation zones
@@ -44,7 +45,7 @@ Mobile-friendly interface
 
 ---
 
-##🤝 Contributing
+## 🤝 Contributing
 Contributions are welcome! To contribute:
 
 Fork the repository
