@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Climate Simulation with {{ deforestation_factor * 100 }}% Deforestation Factor</h2>
+
+<p>Projected for the next {{ years_ahead }} years.</p>
+
+<div class="graphs">
+    {{ graphs.temp_graph | safe }}
+    {{ graphs.rain_graph | safe }}
+</div>
+
+<a href="{{ url_for('index') }}" class="back-link">Back to Home</a>
+{% endblock %}

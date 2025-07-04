@@ -1,0 +1,109 @@
+/* ClimaS Branding: Deep Teal & Ivory Cream */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #F0EDCC;
+    color: #02343F;
+}
+
+.container {
+    width: 90%;
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+}
+
+.navbar {
+    background-color: #02343F;
+    color: #F0EDCC;
+    padding: 15px 0;
+}
+
+.navbar h1 {
+    margin: 0;
+    display: inline;
+}
+
+.navbar ul {
+    list-style: none;
+    float: right;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar ul li {
+    display: inline;
+    margin-left: 15px;
+}
+
+.navbar ul li a {
+    color: #F0EDCC;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+h2, h3 {
+    color: #02343F;
+}
+
+form.form-section {
+    background: #02343F;
+    color: #F0EDCC;
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 8px;
+}
+
+form label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+form select, form input[type="range"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+button {
+    background: #F0EDCC;
+    color: #02343F;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #dcd9b9;
+}
+
+.graphs {
+    margin-top: 20px;
+}
+
+.crop-list {
+    list-style: square;
+    padding-left: 20px;
+    background: #F0EDCC;
+    border: 1px solid #02343F;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.back-link {
+    display: inline-block;
+    margin-top: 20px;
+    text-decoration: none;
+    color: #02343F;
+    font-weight: bold;
+}
+
+footer {
+    background: #02343F;
+    color: #F0EDCC;
+    text-align: center;
+    padding: 15px;
+    margin-top: 30px;
+}
