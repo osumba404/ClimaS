@@ -13,6 +13,9 @@
     </select>
     <button type="submit">Get Predictions</button>
 </form>
+<div id="toast" class="hidden">Action completed successfully!</div>
+
+<div id="loader" class="hidden">Loading...</div>
 
 <form method="POST" action="{{ url_for('simulate') }}" class="form-section">
     <label for="deforestation_factor">Simulate Deforestation Impact:</label>

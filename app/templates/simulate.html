@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+<div id="toast" class="hidden">Action completed successfully!</div>
+
+<div id="loader" class="hidden">Loading...</div>
+
 <h2>Climate Simulation with {{ deforestation_factor * 100 }}% Deforestation Factor</h2>
 
 <p>Projected for the next {{ years_ahead }} years.</p>

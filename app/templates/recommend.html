@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Recommended Crops for Your Region</h2>
+
+<p>Based on simulated climate trends, we suggest the following crops:</p>
+
+<ul class="crop-list">
+    {% for crop in crops %}
+        <li>{{ crop }}</li>
+    {% endfor %}
+</ul>
+
+<a href="{{ url_for('index') }}" class="back-link">Back to Home</a>
+{% endblock %}

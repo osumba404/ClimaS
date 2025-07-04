@@ -19,6 +19,19 @@
         </div>
     </nav>
 
+    <div id="toast" class="hidden">Action completed successfully!</div>
+
+    <nav class="navbar">
+        <div class="nav-brand">ClimaS</div>
+        <button class="menu-toggle" id="menuToggle">&#9776;</button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="/">Home</a></li>
+            <li><a href="/predict">Predict</a></li>
+            <li><a href="/simulate">Simulate</a></li>
+        </ul>
+    </nav>
+
+
     <main class="container">
         {% block content %}{% endblock %}
     </main>
