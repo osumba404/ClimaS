@@ -21,22 +21,26 @@
 
 ```bash
 git clone https://github.com/osumba404/climas.git
-cd climas
+cd climas 
+```
 
 ### 2️⃣ Install Required Packages
-
+```bash
 pip install -r requirements.txt
+```
 
 ### 3️⃣ Configure Environment Variables
 
 Create a .env file in the project root:
+```bash
 FLASK_SECRET=your_secret_key_here
 OPENWEATHER_API_KEY=your_openweather_api_key_here
+```
 
 ### 4️⃣ Run the Application
-
+```bash
 python app.py
-
+```
 
 ##📊 Typical Workflow
 1. User selects a region
