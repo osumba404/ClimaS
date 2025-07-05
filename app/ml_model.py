@@ -11,44 +11,57 @@
 
 
 
-
 # app/ml_model.py
+
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
+from app.models import ClimateRecord
+import warnings
+
+warnings.filterwarnings("ignore")  # Optional: Clean up random sklearn warnings
+
 
 # ------------------------------------------
-# Load Sample Climate Data
-# In production, replace with real datasets or APIs
+# Load Data from SQLite (via SQLAlchemy)
 # ------------------------------------------
-def load_sample_data():
+def load_real_data():
     """
-    Simulates historical climate data.
+    Loads real historical climate data from the database.
     Returns:
-        pd.DataFrame: Climate dataset with Year, Temperature, Rainfall, Humidity
+        pd.DataFrame: Yearly average climate metrics
     """
-    data = {
-        'Year': range(2000, 2025),
-        'Temperature': [25.0 + i * 0.1 + np.random.normal(0, 0.5) for i in range(25)],
-        'Rainfall': [800 + i * 2 + np.random.normal(0, 50) for i in range(25)],
-        'Humidity': [60 + i * 0.5 + np.random.normal(0, 5) for i in range(25)]
-    }
-    return pd.DataFrame(data)
+    records = ClimateRecord.query.all()
+
+    data = [{
+        'Year': r.year,
+        'Month': r.month,
+        'Temperature': r.temperature,
+        'Rainfall': r.rainfall,
+        'Humidity': r.humidity
+    } for r in records]
+
+    df = pd.DataFrame(data)
+
+    # Group by Year for yearly averages
+    df = df.groupby('Year').mean().reset_index()
+
+    return df
 
 
 # ------------------------------------------
-# Train ML Model
+# Train ML Models for Each Metric
 # ------------------------------------------
 def train_model(df):
     """
-    Trains a Random Forest model for each climate target.
+    Trains separate Random Forest models for Temp, Rainfall, Humidity.
     Args:
-        df (pd.DataFrame): Historical climate dataset
+        df (pd.DataFrame): Historical climate data
     Returns:
-        dict: Trained models for Temperature, Rainfall, Humidity
+        dict: Trained models
     """
     models = {}
-    X = df[['Year']]
+    X = df[['Year']]  # Feature: just year for now
 
     for target in ['Temperature', 'Rainfall', 'Humidity']:
         y = df[target]
@@ -60,16 +73,16 @@ def train_model(df):
 
 
 # ------------------------------------------
-# Predict Future Climate Conditions
+# Predict Future Climate for N Years
 # ------------------------------------------
 def predict_climate(models, years_ahead):
     """
-    Predicts future climate metrics based on trained models.
+    Forecasts temperature, rainfall, and humidity for future years.
     Args:
         models (dict): Trained models
-        years_ahead (int): Number of years to forecast
+        years_ahead (int): Years to forecast
     Returns:
-        pd.DataFrame: Predicted climate for future years
+        pd.DataFrame: Predicted metrics
     """
     future_years = np.array(range(2025, 2025 + years_ahead)).reshape(-1, 1)
     predictions = {}
@@ -86,23 +99,38 @@ def predict_climate(models, years_ahead):
 
 
 # ------------------------------------------
-# Simulate Scenario: Deforestation Impact
+# Simulate Deforestation Scenario
 # ------------------------------------------
 def simulate_scenario(df, deforestation_factor):
     """
-    Applies deforestation effects to predicted climate.
+    Simulates the effect of deforestation on predicted climate.
     Args:
-        df (pd.DataFrame): Baseline predicted climate
-        deforestation_factor (float): 0.0 to 1.0 scale representing % deforestation
+        df (pd.DataFrame): Predicted climate (baseline)
+        deforestation_factor (float): Scale from 0 to 1
     Returns:
-        pd.DataFrame: Adjusted climate data reflecting deforestation impact
+        pd.DataFrame: Adjusted climate projections
     """
     df_simulated = df.copy()
 
     # +0.5°C per 10% deforestation
-    df_simulated['Temperature'] += deforestation_factor * 0.5  
+    df_simulated['Temperature'] += deforestation_factor * 0.5
 
     # -20% rainfall per 10% deforestation
-    df_simulated['Rainfall'] *= (1 - deforestation_factor * 0.2)  
+    df_simulated['Rainfall'] *= (1 - deforestation_factor * 0.2)
 
     return df_simulated
+
+
+# ------------------------------------------
+# Optional: Get Feature Importance
+# ------------------------------------------
+def get_feature_importance(model, feature_names=['Year']):
+    """
+    Extracts feature importances from a trained model.
+    Args:
+        model (RandomForestRegressor)
+    Returns:
+        dict: Feature importances
+    """
+    importances = model.feature_importances_
+    return dict(zip(feature_names, importances))

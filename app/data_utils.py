@@ -3,23 +3,34 @@
 import pandas as pd
 import numpy as np
 
-# ===============================
-# Load Sample Historical Climate Data
-# ===============================
-def load_sample_data():
-    """
-    Generates simulated historical climate data.
-    Replace with real API or datasets in production.
+from app.models import ClimateRecord
 
-    Returns:
-        DataFrame: Historical climate trends (2000 - 2024)
+def load_historical_data():
     """
-    years = np.arange(2000, 2025)
-    data = {
-        'Year': years,
-        'Temperature': 25 + 0.1 * (years - 2000) + np.random.normal(0, 0.5, len(years)),
-        'Rainfall': 800 + 2 * (years - 2000) + np.random.normal(0, 50, len(years)),
-        'Humidity': 60 + 0.5 * (years - 2000) + np.random.normal(0, 5, len(years))
-    }
+    Loads full climate records from DB as DataFrame with all features.
+    """
+    records = ClimateRecord.query.order_by(ClimateRecord.year, ClimateRecord.month).all()
+
+    data = [{
+        'Year': rec.year,
+        'Month': rec.month,
+        'Temperature': rec.temperature,
+        'Rainfall': rec.rainfall,
+        'Humidity': rec.humidity,
+        'WindSpeed': rec.wind_speed,
+        'SolarRadiation': rec.solar_radiation,
+        'Evapotranspiration': rec.evapotranspiration,
+        'SoilMoisture': rec.soil_moisture,
+        'CloudCover': rec.cloud_cover,
+        'AirPressure': rec.air_pressure,
+        'DewPoint': rec.dew_point,
+        'MinTemperature': rec.min_temperature,
+        'MaxTemperature': rec.max_temperature,
+        'VegetationIndex': rec.vegetation_index,
+        'HeatIndex': rec.heat_index,
+        'DroughtIndex': rec.drought_index,
+        'CO2Concentration': rec.CO2_concentration
+    } for rec in records]
 
     return pd.DataFrame(data)
+
