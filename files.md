@@ -40,4 +40,5 @@ climas/                               # Root project folder
 ├── .env                             # Environment variables (API keys, Flask secrets, config settings)
 ├── requirements.txt                 # Python package dependencies for the entire project
 ├── app.py                           # Main entry point that runs the Flask application
+├── config.py                        # Set up SQLite db
 └── README.md                        # Project overview, setup instructions, usage guide

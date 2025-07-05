@@ -1,6 +1,8 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
+from .climate_record import ClimateRecord
+
 import os
 
 db = SQLAlchemy()
@@ -13,10 +15,10 @@ def create_app():
 
     db.init_app(app)
 
-    # Import models to register with SQLAlchemy
-    from app.models import ClimateRecord
+    # Import models so SQLAlchemy knows them
+    from app.models.climate_record import ClimateRecord
 
-    # Register blueprint
+    # Register routes blueprint
     from app.routes import main
     app.register_blueprint(main)
 
