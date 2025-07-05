@@ -8,7 +8,5 @@ plotly
 joblib
 numpy
 mistralai
-
-# for data exploration
 jupyter
 notebook
