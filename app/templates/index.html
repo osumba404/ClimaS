@@ -1,39 +1,160 @@
-<!-- climas/app/templates/index.html -->
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClimaS - Climate Forecasting</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
-{% block title %}ClimaS - Home{% endblock %}
+        body {
+            background-color: #f0f4f3;
+            font-family: 'Roboto', sans-serif;
+            color: #2d3748;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .hero {
+            background: linear-gradient(135deg, #2a4365, #4c8a6b);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"%3E%3Cpath fill="%23ffffff" fill-opacity="0.1" d="M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,144C672,139,768,181,864,181.3C960,181,1056,139,1152,133.3C1248,128,1344,160,1392,176L1440,192L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"%3E%3C/path%3E%3C/svg%3E') no-repeat bottom;
+        }
+        .neumorphic {
+            background: #e2e8f0;
+            border-radius: 1rem;
+            box-shadow: 8px 8px 16px #cbd5e0, -8px -8px 16px #ffffff;
+            transition: all 0.3s ease;
+        }
+        .neumorphic:hover {
+            box-shadow: 4px 4px 8px #cbd5e0, -4px -4px 8px #ffffff;
+            transform: translateY(-2px);
+        }
+        .input-neumorphic {
+            background: #e2e8f0;
+            border: none;
+            border-radius: 0.5rem;
+            box-shadow: inset 4px 4px 8px #cbd5e0, inset -4px -4px 8px #ffffff;
+            transition: all 0.3s ease;
+        }
+        .input-neumorphic:focus {
+            box-shadow: inset 2px 2px 4px #cbd5e0, inset -2px -2px 4px #ffffff;
+            outline: none;
+            border: 2px solid #4c8a6b;
+        }
+        .btn-cta {
+            background: linear-gradient(45deg, #4c8a6b, #68d391);
+            color: white;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .btn-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .btn-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: 0.5s;
+        }
+        .btn-cta:hover::before {
+            left: 100%;
+        }
+        .animate-fade-in {
+            animation: fadeIn 1s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        footer {
+            background: #2d3748;
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <div class="hero">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4 animate-fade-in">Welcome to ClimaS</h1>
+        <p class="text-lg md:text-xl max-w-2xl mx-auto animate-fade-in">Your tool for predicting future climate trends and optimizing crop recommendations with cutting-edge simulations.</p>
+    </div>
 
-{% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card p-4">
-            <div class="card-body">
-                <h2 class="card-title text-center mb-4">Climate Prediction & Simulation</h2>
-                <p class="text-center text-muted">Select a region and set simulation parameters to forecast future climate and receive crop recommendations.</p>
-                
-                <form action="{{ url_for('main.results') }}" method="post">
-                    <!-- Region Selection -->
-                    <div class="mb-3">
-                        <label for="region" class="form-label">Target Region</label>
-                        <select class="form-select" id="region" name="region">
-                            <option value="Kirinyaga">Kirinyaga, Kenya (Sample)</option>
-                        </select>
-                    </div>
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-12 flex-grow">
+        <div class="flex justify-center">
+            <div class="w-full max-w-md neumorphic p-8 animate-fade-in">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Climate Simulation</h2>
 
-                    <!-- Scenario Simulation -->
-                    <h4 class="mt-4">Scenario Simulation (Next 15 Years)</h4>
-                    <div class="mb-3">
-                        <label for="land_use_sim" class="form-label">Land Use Intensity Change (%)</label>
-                        <input type="number" class="form-control" id="land_use_sim" name="land_use_sim" value="0" min="-100" max="100" step="5">
-                        <div class="form-text">e.g., `20` for a 20% increase in deforestation, or `-50` for 50% afforestation.</div>
-                    </div>
+                <!-- Region Selection -->
+                <div class="mb-6">
+                    <label for="region" class="block text-sm font-medium text-gray-700 mb-2">Select Region</label>
+                    <select class="input-neumorphic w-full p-3 text-gray-800" id="region" name="region">
+                        <option value="Kirinyaga">Kirinyaga, Kenya (Sample)</option>
+                        <option value="Nairobi">Nairobi, Kenya</option>
+                        <option value="Mombasa">Mombasa, Kenya</option>
+                    </select>
+                </div>
 
-                    <div class="d-grid mt-4">
-                        <button type="submit" class="btn btn-primary btn-lg">Analyze & Predict</button>
-                    </div>
-                </form>
+                <!-- Scenario Simulation -->
+                <div class="mb-6">
+                    <label for="land_use_sim" class="block text-sm font-medium text-gray-700 mb-2">Land Use Change (%)</label>
+                    <input type="number" class="input-neumorphic w-full p-3 text-gray-800" id="land_use_sim" name="land_use_sim" value="0" min="-100" max="100" step="5">
+                    <p class="text-sm text-gray-500 mt-2">Positive for deforestation, negative for afforestation (e.g., -50 for 50% afforestation).</p>
+                </div>
+
+                <!-- Climate Model Selection -->
+                <div class="mb-6">
+                    <label for="climate_model" class="block text-sm font-medium text-gray-700 mb-2">Climate Model</label>
+                    <select class="input-neumorphic w-full p-3 text-gray-800" id="climate_model" name="climate_model">
+                        <option value="moderate">Moderate (RCP 4.5)</option>
+                        <option value="high">High Emissions (RCP 8.5)</option>
+                        <option value="low">Low Emissions (RCP 2.6)</option>
+                    </select>
+                    <p class="text-sm text-gray-500 mt-2">Select a climate scenario for the simulation.</p>
+                </div>
+
+                <div class="mt-8">
+                    <button onclick="submitForm()" class="btn-cta w-full py-3 rounded-lg text-lg">Run Simulation</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-{% endblock %}
+
+    <!-- Footer -->
+    <footer>
+        <p class="text-sm">&copy; 2025 ClimaS. Empowering sustainable futures.</p>
+    </footer>
+
+    <script>
+        function submitForm() {
+            const region = document.getElementById('region').value;
+            const landUseSim = document.getElementById('land_use_sim').value;
+            const climateModel = document.getElementById('climate_model').value;
+            window.location.href = `/results?region=${encodeURIComponent(region)}&land_use_sim=${encodeURIComponent(landUseSim)}&climate_model=${encodeURIComponent(climateModel)}`;
+        }
+    </script>
+</body>
+</html>
