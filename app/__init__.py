@@ -1,6 +1,5 @@
 # climas/app/__init__.py
 from flask import Flask
-<<<<<<< HEAD
 from .config import Config
 from . import data_utils
 import os
@@ -29,27 +28,3 @@ def create_app(config_class=Config):
 
     print("ClimaS application created successfully.")
     return app
-=======
-from flask_sqlalchemy import SQLAlchemy
-from dotenv import load_dotenv
-import os
-
-db = SQLAlchemy()
-
-def create_app():
-    load_dotenv()
-
-    app = Flask(__name__, template_folder='templates', static_folder='static')
-    app.config.from_object('config.Config')
-
-    db.init_app(app)
-
-    # Import models to register with SQLAlchemy
-    from app.models import ClimateRecord
-
-    # Register blueprint
-    from app.routes import main
-    app.register_blueprint(main)
-
-    return app
->>>>>>> 79d45465cf3a2ef4c3330698045f2fbdd6de00cd
