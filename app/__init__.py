@@ -1,20 +1,30 @@
+# climas/app/__init__.py
 from flask import Flask
-from dotenv import load_dotenv
+from .config import Config
+from . import data_utils
 import os
 
-def create_app():
-    load_dotenv()
+def create_app(config_class=Config):
+    """
+    Creates and configures the Flask application.
+    This is the application factory.
+    """
+    app = Flask(__name__)
+    app.config.from_object(config_class)
 
-    # Dynamic paths (optional, but robust)
-    base_dir = os.path.abspath(os.path.dirname(__file__))
+    # --- First-time setup: Generate data and train model if they don't exist ---
+    if not os.path.exists(data_utils.PROCESSED_DATA_PATH):
+        print("Processed data not found. Generating new synthetic data...")
+        data_utils.generate_synthetic_data()
 
-    app = Flask(__name__,
-                template_folder=os.path.join(base_dir, 'templates'),
-                static_folder=os.path.join(base_dir, 'static'))
+    from . import ml_model
+    if not os.path.exists(ml_model.MODEL_PATH):
+        print("ML model not found. Training a new model...")
+        ml_model.train_model()
 
-    # app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET', 'default_secret')
+    # --- Register routes ---
+    from . import routes
+    app.register_blueprint(routes.main_bp)
 
-    from .routes import main
-    app.register_blueprint(main)
-
+    print("ClimaS application created successfully.")
     return app

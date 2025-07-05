@@ -1,97 +1,61 @@
-# app/routes.py
+# climas/app/routes.py
+from flask import render_template, request, Blueprint
+from . import ml_model, recommend, data_utils
+import plotly
+import plotly.graph_objs as go
+import json
+import pandas as pd
 
-from flask import Blueprint, render_template, request
-from .ml_model import train_model, predict_climate, simulate_scenario
-from .data_utils import load_sample_data
-from .recommend import recommend_crops
-import plotly.io as pio
-import plotly.graph_objects as go
+main_bp = Blueprint('main', __name__)
 
-# Initialize blueprint
-main = Blueprint('main', __name__)
+# --- Load models and data once when the app starts ---
+MODELS, FEATURES = ml_model.load_model_and_artifacts()
+HISTORICAL_DATA = data_utils.load_processed_data()
 
-# ---------------------------
-# ROUTE: Home Page
-# ---------------------------
-@main.route('/')
+@main_bp.route('/')
 def index():
+    """Renders the main input page."""
     return render_template('index.html')
 
+@main_bp.route('/results', methods=['POST'])
+def results():
+    """Handles form submission and displays all analysis results."""
+    # 1. Get user input
+    region = request.form['region']
+    land_use_sim_perc = int(request.form.get('land_use_sim', 0))
+    land_use_modifier = land_use_sim_perc / 100.0
 
-# ---------------------------
-# ROUTE: Climate Prediction
-# ---------------------------
-@main.route('/predict', methods=['GET', 'POST'])
-def predict():
-    years_ahead = int(request.form.get('years_ahead', 10)) if request.method == 'POST' else 10
-    df = load_sample_data()
-    models = train_model(df)
-    predicted_df = predict_climate(models, years_ahead)
-    graphs = generate_prediction_graphs(predicted_df)
-    crops = recommend_crops(predicted_df)
+    # 2. Historical Data Visualization
+    historical_plots = ml_model.create_historical_plots(HISTORICAL_DATA)
 
-    return render_template('predict.html', graphs=graphs, crops=crops, years_ahead=years_ahead)
-
-
-# ---------------------------
-# ROUTE: Climate Simulation
-# ---------------------------
-@main.route('/simulate', methods=['GET', 'POST'])
-def simulate():
-    years_ahead = int(request.form.get('years_ahead', 10)) if request.method == 'POST' else 10
-    deforestation_factor = float(request.form.get('deforestation_factor', 0.0)) if request.method == 'POST' else 0.0
-
-    df = load_sample_data()
-    models = train_model(df)
-    baseline_df = predict_climate(models, years_ahead)
-    simulated_df = simulate_scenario(baseline_df, deforestation_factor)
-    graphs = generate_simulation_graphs(baseline_df, simulated_df)
-
-    return render_template('simulate.html', graphs=graphs, years_ahead=years_ahead, deforestation_factor=deforestation_factor)
-
-
-# ---------------------------
-# Helper: Prediction Graphs
-# ---------------------------
-def generate_prediction_graphs(predicted_df):
-    graphs = {}
-
-    fig_temp = go.Figure()
-    fig_temp.add_trace(go.Scatter(x=predicted_df['Year'], y=predicted_df['Temperature'], mode='lines', name='Temperature'))
-    fig_temp.update_layout(title='Predicted Temperature Trends')
+    # 3. AI Model Insights
+    feature_importance_plot = ml_model.create_feature_importance_plot(MODELS, FEATURES)
     
-    fig_rain = go.Figure()
-    fig_rain.add_trace(go.Scatter(x=predicted_df['Year'], y=predicted_df['Rainfall'], mode='lines', name='Rainfall'))
-    fig_rain.update_layout(title='Predicted Rainfall Trends')
+    # 4. Future Prediction (Baseline)
+    baseline_df = ml_model.predict_future_climate(MODELS, FEATURES, 2024, 2038)
     
-    fig_hum = go.Figure()
-    fig_hum.add_trace(go.Scatter(x=predicted_df['Year'], y=predicted_df['Humidity'], mode='lines', name='Humidity'))
-    fig_hum.update_layout(title='Predicted Humidity Trends')
+    # 5. Scenario Simulation
+    sim_params = {'land_use_change': land_use_modifier}
+    simulated_df = ml_model.predict_future_climate(MODELS, FEATURES, 2024, 2038, simulation_params=sim_params)
+    simulation_plot = ml_model.create_simulation_comparison_plot(baseline_df, simulated_df)
 
-    graphs['temp_graph'] = pio.to_html(fig_temp, full_html=False)
-    graphs['rain_graph'] = pio.to_html(fig_rain, full_html=False)
-    graphs['hum_graph'] = pio.to_html(fig_hum, full_html=False)
+    # 6. Crop Recommendation
+    sim_climate_2035 = simulated_df[simulated_df['date'].dt.year == 2035]
+    avg_sim_temp = sim_climate_2035['predicted_temperature'].mean()
+    avg_sim_rain = sim_climate_2035['predicted_rainfall'].mean()
+    recommendations = recommend.recommend_crops(avg_sim_temp, avg_sim_rain)
+    
+    sim_change_text = f"{land_use_sim_perc}% {'increase' if land_use_sim_perc >= 0 else 'decrease'} in land use intensity (e.g. deforestation)"
 
-    return graphs
-
-
-# ---------------------------
-# Helper: Simulation Graphs
-# ---------------------------
-def generate_simulation_graphs(baseline_df, simulated_df):
-    graphs = {}
-
-    fig_temp = go.Figure()
-    fig_temp.add_trace(go.Scatter(x=baseline_df['Year'], y=baseline_df['Temperature'], mode='lines', name='Baseline'))
-    fig_temp.add_trace(go.Scatter(x=simulated_df['Year'], y=simulated_df['Temperature'], mode='lines', name='Simulated'))
-    fig_temp.update_layout(title='Temperature: Baseline vs Simulated')
-
-    fig_rain = go.Figure()
-    fig_rain.add_trace(go.Scatter(x=baseline_df['Year'], y=baseline_df['Rainfall'], mode='lines', name='Baseline'))
-    fig_rain.add_trace(go.Scatter(x=simulated_df['Year'], y=simulated_df['Rainfall'], mode='lines', name='Simulated'))
-    fig_rain.update_layout(title='Rainfall: Baseline vs Simulated')
-
-    graphs['temp_graph'] = pio.to_html(fig_temp, full_html=False)
-    graphs['rain_graph'] = pio.to_html(fig_rain, full_html=False)
-
-    return graphs
+    return render_template(
+        'results.html',
+        region=region,
+        historical_temp_json=historical_plots['temp'],
+        historical_rain_json=historical_plots['rain'],
+        feature_importance_json=feature_importance_plot,
+        simulation_graph_json=simulation_plot,
+        sim_change_text=sim_change_text,
+        recommendations=recommendations,
+        avg_sim_temp=avg_sim_temp,
+        avg_sim_rain=avg_sim_rain
+    )

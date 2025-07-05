@@ -1,0 +1,71 @@
+<!-- climas/app/templates/results.html -->
+{% extends "base.html" %}
+
+{% block title %}Analysis for {{ region }}{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <h1>Analysis for {{ region }}</h1>
+    <hr>
+</div>
+
+<!-- Historical Trends -->
+<div class="card">
+    <div class="card-header"><h3 class="card-title">1. Historical Climate Trends (2004-2023)</h3></div>
+    <div class="card-body">
+        <div id="historical_temp_graph"></div>
+        <div id="historical_rain_graph" class="mt-3"></div>
+    </div>
+</div>
+
+<!-- AI Model Insights -->
+<div class="card">
+    <div class="card-header"><h3 class="card-title">2. Key Climate Drivers (AI Model Insights)</h3></div>
+    <div class="card-body">
+        <p>The AI model identified the following factors as most influential in determining temperature, based on historical data.</p>
+        <div id="feature_importance_graph"></div>
+    </div>
+</div>
+
+<!-- Scenario Simulation -->
+<div class="card">
+    <div class="card-header"><h3 class="card-title">3. Scenario Simulation Results</h3></div>
+    <div class="card-body">
+        <p>Comparing the baseline projection against your simulated scenario of <strong>{{ sim_change_text }}</strong>.</p>
+        <div id="simulation_graph"></div>
+    </div>
+</div>
+
+<!-- Crop Recommendations -->
+<div class="card">
+    <div class="card-header"><h3 class="card-title">4. Crop Recommendations (for 2035)</h3></div>
+    <div class="card-body">
+        <p>Based on the <strong>simulated climate projections</strong> for 2035 (Avg Temp: {{ '%.2f'|format(avg_sim_temp) }}°C, Avg Rain: {{ '%.2f'|format(avg_sim_rain) }} mm), the following crops are recommended:</p>
+        <ul class="list-group">
+            {% for crop in recommendations %}
+            <li class="list-group-item">{{ crop }}</li>
+            {% else %}
+            <li class="list-group-item">No specific crop recommendations for these conditions.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<div class="text-center my-4">
+     <a href="{{ url_for('main.index') }}" class="btn btn-secondary">Run New Simulation</a>
+</div>
+
+<script>
+    const graphs = {
+        historical_temp: JSON.parse('{{ historical_temp_json | safe }}'),
+        historical_rain: JSON.parse('{{ historical_rain_json | safe }}'),
+        feature_importance: JSON.parse('{{ feature_importance_json | safe }}'),
+        simulation_graph: JSON.parse('{{ simulation_graph_json | safe }}')
+    };
+
+    Plotly.newPlot('historical_temp_graph', graphs.historical_temp.data, graphs.historical_temp.layout);
+    Plotly.newPlot('historical_rain_graph', graphs.historical_rain.data, graphs.historical_rain.layout);
+    Plotly.newPlot('feature_importance_graph', graphs.feature_importance.data, graphs.feature_importance.layout);
+    Plotly.newPlot('simulation_graph', graphs.simulation_graph.data, graphs.simulation_graph.layout);
+</script>
+{% endblock %}
